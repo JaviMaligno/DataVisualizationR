@@ -1,0 +1,1723 @@
+---
+# Para transformar em PDF, usar: 
+# pagedown::chrome_print("docs/index.html")
+title: "Data visualisation tools with R"
+author: "Bruno Santos"
+date: "feb/2023"
+output:
+  xaringan::moon_reader:
+    seal: true
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+```{r xaringan-scribble, echo=FALSE}
+xaringanExtra::use_scribble()
+xaringanExtra::use_share_again()
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      fig.align = "center", 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      comment = "  #>", 
+                      collapse = T)
+```
+
+```{r libs}
+library(tidyverse)
+library(MASS) 
+library(skimr)
+library(viridis)
+library(gganimate)
+library(highcharter)
+```
+
+class: center, bottom
+
+```{r, out.width="70%", fig.cap="<center><b> </center></b>"}
+knitr::include_graphics("img/ggplot2_masterpiece.png")
+```
+
+## Artwork by @allison_horst
+
+---
+# Quick reminder:
+
+### Stats-Desk
+
+- Service maintained by members of the Statistics group:
+
+- More information at:
+
+https://research.kent.ac.uk/statistics/statistics-consultancy/
+
+- Provides help with statistical analysis for the University of Kent community.
+
+- Examples:
+
+  - Support you with designing an investigation, including help with the preparation of questionnaires,
+  - Help you to select the right techniques, tools, and software for analysing data,
+  - Advise on statistical analyses and presentation of conclusions
+
+
+---
+
+# ggplot2
+
+```{r, out.width="20%", fig.cap="<center><b> </center></b>"}
+knitr::include_graphics("img/hex-ggplot2.png")
+```
+
+- Builds plots with a layer logic.
+
+  - Similar to pipe operator (`%>%`).
+  
+  - But with operator `+`.
+
+- Developed by [Hadley Wickham](https://hadley.nz).
+
+  - Now part of the tidyverse: [https://ggplot2.tidyverse.org](https://ggplot2.tidyverse.org)
+
+- Inspired by "The Grammar of Graphics" by Leland Wilkinson (1999) (`gg` of `ggplot2`].
+
+---
+
+# Topics
+
+- Introduction to plots
+
+  - Base R: `graphics` package.
+  
+- Introduction to `ggplot2`.
+
+  - Illustration with different geometrical objects
+
+  - More options for your plot
+
+- Combining different plots with `patchwork`
+
+- Making maps with `ggplot2`
+
+- Animations using `gganimate`
+
+- Examples with web interfaces:
+
+  - maps with `leaflet`
+
+  - Interactive plots with `highcharter`
+
+
+---
+class: center, middle, inverse
+
+# Examples
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-extra7-1.png)
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-geom14-1.png)
+
+<!-- --- -->
+<!-- class: center, middle -->
+
+<!-- ![](2022_data_visualisation_files/figure-html/plot-map2-1.png) -->
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-patch3-1.png)
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-patch4-1.png)
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-anim1-1.gif)
+
+---
+class: center, middle, inverse
+
+# Introduction to plots
+
+## Base R: graphics package
+
+---
+
+# `plot` function
+
+- Always helpful to check:
+
+```{r, echo=TRUE, eval=FALSE}
+?plot
+```
+
+--
+
+- It does have a lot of arguments and possibilities.
+
+```{r, echo=TRUE, eval=FALSE}
+?par
+```
+
+--
+
+- For quick analysis of results and checks, it is definitely a good option.
+
+--
+
+- It allows the possibility of thinking about layers.
+
+  - But checks are not automatic.
+  
+---
+# Our first plot
+
+.left-code[
+```{r plot1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+plot(x)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot1", "png")`)
+]
+
+
+---
+# Incrementing our first plot
+
+.left-code[
+```{r plot2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(x, y)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot2", "png")`)
+]
+
+---
+# This is different
+
+.left-code[
+```{r plot3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(y, x)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot3", "png")`)
+]
+
+---
+# Does the order of arguments matter?
+
+.left-code[
+```{r plot4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(y = y, x = x)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot4", "png")`)
+]
+
+---
+# Different options for our plot
+
+.left-code[
+```{r plot5, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(y = y, x = x, type = 'l')
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot5", "png")`)
+]
+
+---
+# Different options for our plot
+
+.left-code[
+```{r plot6, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(y = y, x = x, type = 'b')
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot6", "png")`)
+]
+
+
+---
+# Different options for our plot
+
+.left-code[
+```{r plot7, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(y = y, x = x, type = 'h')
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot7", "png")`)
+]
+
+
+---
+# Different colors and linetypes 
+
+.left-code[
+```{r plot8, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(y = y, x = x, type = 'h', 
+     col = 2, 
+     lty = 2)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot8", "png")`)
+]
+
+---
+# Different types of points
+
+.left-code[
+```{r plot9, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+plot(y = y, x = x, type = 'b', 
+     col = 4, 
+     lty = 4,
+     pch = 16)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot9", "png")`)
+]
+
+
+---
+# One can visualise several plots
+
+.left-code[
+```{r plot10, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+
+par(mfrow = c(1, 2))
+
+plot(y = y, x = x, type = 'b', 
+     col = 4, 
+     lty = 4,
+     pch = 16)
+
+plot(y = y, x = x, type = 'h', 
+     col = 4, 
+     lty = 4)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot10", "png")`)
+]
+
+
+---
+# One can visualise several plots
+
+.left-code[
+```{r plot11, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+
+par(mfrow = c(2, 2))
+
+plot(y = y, x = x, type = 'b', 
+     col = 4, lty = 4, pch = 16)
+
+plot(y = y, x = x, type = 'h', 
+     col = 4, lty = 4)
+
+plot(y = y, x = x, type = 'l', 
+     col = "darkviolet", lty = 5)
+
+plot(y = y, x = x, type = 'o', 
+     col = "royalblue", lty = 3)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot11", "png")`)
+]
+
+---
+# One can add layers of information
+
+.left-code[
+```{r plot12, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+z <- y + 3
+w <- z + 3
+
+plot(x, y, type = 'l')
+
+lines(x, z, col = 2)
+
+points(x, w, col = 4)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot12", "png")`)
+]
+
+---
+# One can fix this issue
+
+.left-code[
+```{r plot13, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+z <- y + 3
+w <- z + 3
+
+plot(x, y, type = 'l', 
+     ylim = c(5, 24)) #<<
+
+lines(x, z, col = 2)
+
+points(x, w, col = 4)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot13", "png")`)
+]
+
+---
+# Several additional functions to use
+
+- For numerical variables:
+
+  - `boxplot` - boxplots;
+  - `hist` - histograms;
+  - `plot.density` - density functions;
+  - ...
+  
+- For categorical variables:
+
+  - `barplot`;
+  - ...
+
+--
+
+- It's possible to use `formula` objects.
+
+  - `y ~ x`
+  
+---
+# Example - boxplot
+
+.left-code[
+```{r plot14, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+boxplot(mtcars$mpg ~ mtcars$cyl, 
+        ylab = "Miles per gallon",
+        xlab = "Cylinders")
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot14", "png")`)
+]
+
+
+---
+class: center, middle, inverse
+
+# Introduction to ggplot2
+
+
+---
+# Basic sintax in ggplot2
+
+```{r , echo=T, eval=F, results = 'markup', out.width="90%"}
+ggplot(data) +
+  aesthetics + 
+  geometries 
+```
+
+```{r, out.width="90%", fig.cap=""}
+knitr::include_graphics("img/ggplot_sintaxe.png")
+```
+
+---
+# More complete sintax in ggplot2
+
+```{r , echo=T, eval=F, results = 'markup', out.width="90%"}
+ggplot(data) +
+  aesthetics + 
+  geometries +
+  facets +
+  coordinates + 
+  theme
+```
+
+```{r, out.width="90%", fig.cap=""}
+knitr::include_graphics("img/grammar_ggplot.png")
+```
+
+---
+class: middle
+
+# First example
+
+```{r , echo=T, out.width="90%", }
+d <- tibble(var_x = 1:4,
+            var_y = seq(2, 8, 2),
+            var_group = c(rep("a", 3), "b"))
+d
+```
+
+---
+# First example
+
+.left-code[
+
+```{r plot-gg1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg1", "png")`)
+]
+
+
+---
+# First example
+
+.left-code[
+
+```{r plot-gg2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d, aes(x = var_x, y = var_y))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg2", "png")`)
+]
+
+---
+# First example
+
+.left-code[
+
+```{r plot-gg3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) + 
+  aes(x = var_x, y = var_y)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg3", "png")`)
+]
+
+
+---
+# First example
+
+.left-code[
+
+```{r plot-gg4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) + 
+  aes(x = var_group, y = var_y)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg4", "png")`)
+]
+
+---
+# Adding geometries
+
+.left-code[
+
+```{r plot-gg5, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) + 
+  aes(x = var_x, y = var_y) + 
+  geom_point()
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg5", "png")`)
+]
+
+
+
+---
+# Adding other geometries
+
+.left-code[
+
+```{r plot-gg6, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) + 
+  aes(x = var_x, y = var_y) + 
+  geom_line()
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg6", "png")`)
+]
+
+---
+# Changing color
+
+.left-code[
+
+```{r plot-gg7, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_point(color = "darkviolet")
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg7", "png")`)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+```{r plot-gg8, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  geom_point(aes(x = var_x, y = var_y, 
+                 color = var_group))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg8", "png")`)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+```{r plot-gg9, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 color = var_group))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg9", "png")`)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+```{r plot-gg10, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+d <- tibble(var_x = 1:5,
+            var_y = seq(2, 10, 2),
+            var_group = c("a", "a", "a",
+                          "b", "b"))
+
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 color = var_group))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg10", "png")`)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+```{r plot-gg11, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 linetype = var_group))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg11", "png")`)
+]
+
+
+---
+# Adding more than one geometry
+
+.left-code[
+
+```{r plot-gg12, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 color = var_group)) +
+  geom_point(aes(x = var_x, y = var_y))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg12", "png")`)
+]
+
+---
+# Adding more than one geometry
+
+.left-code[
+
+```{r plot-gg13, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(aes(color = var_group)) +
+  geom_point()
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg13", "png")`)
+]
+
+---
+# Order makes a difference
+
+.left-code[
+
+```{r plot-gg14, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_point() + 
+  geom_line(aes(color = var_group))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg14", "png")`)
+]
+
+---
+# Using same aesthestics for all geometries
+
+.left-code[
+
+```{r plot-gg15, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y, color = var_group) +
+  geom_point() + 
+  geom_line()
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg15", "png")`)
+]
+
+---
+# Changing color just for one
+
+.left-code[
+
+```{r plot-gg16, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line() + 
+  geom_point(aes(color = var_group)) 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg16", "png")`)
+]
+
+---
+# Changing color just for one
+
+.left-code[
+
+```{r plot-gg17, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(aes(color = var_group)) 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg17", "png")`)
+]
+
+
+
+---
+# Changing color for both geometries
+
+.left-code[
+
+```{r plot-gg18, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg18", "png")`)
+]
+
+---
+# Adding facets
+
+.left-code[
+
+```{r plot-gg19, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg19", "png")`)
+]
+
+
+---
+# Adding facets with different x-axis
+
+.left-code[
+
+```{r plot-gg20, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group, 
+             scales = "free_x") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg20", "png")`)
+]
+
+---
+# Adding facets with different y-axis
+
+.left-code[
+
+```{r plot-gg21, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group, 
+             scales = "free_y") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg21", "png")`)
+]
+
+---
+# Adding facets with different y-axis
+
+.left-code[
+
+```{r plot-gg22, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group, 
+             scales = "free") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg22", "png")`)
+]
+
+---
+# Adding coordinates
+
+.left-code[
+
+```{r plot-gg23, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+  coord_equal() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg23", "png")`)
+]
+
+
+---
+# Changing the theme
+
+.left-code[
+
+```{r plot-gg24, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+  coord_equal() + 
+  theme_bw() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg24", "png")`)
+]
+
+---
+# Changing the theme
+
+.left-code[
+
+```{r plot-gg25, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+  coord_equal() + 
+  theme_minimal() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg25", "png")`)
+]
+
+---
+# Changing the theme
+
+.left-code[
+
+```{r plot-gg26, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+  coord_equal() + 
+  theme_classic() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-gg26", "png")`)
+]
+
+---
+
+# Your turn
+
+- Check the documentation to see the possibilities of geometric objects:
+
+  - https://ggplot2.tidyverse.org/reference/index.html
+  
+- Did you notice any geometry not present there?
+
+- Check some of the examples.
+
+- See if you have any doubts about the examples presented so far.
+
+
+---
+class: inverse, middle, center
+
+# Illustration with different geometrical objects
+
+---
+class: inverse, middle, center
+
+# Examples with categorical variables
+
+---
+# Dataset to be used
+
+- Considering a dataset from `ggplot2`
+
+```{r, echo=TRUE, eval=FALSE}
+library(ggplot2)
+data(diamonds)
+?diamonds
+```
+
+- Checking some information about the dataset:
+
+```{r, echo=TRUE, eval=FALSE}
+library(skimr)
+skim(diamonds)
+```
+
+---
+# Contingency tables
+
+```{r, echo=TRUE}
+library(janitor)
+tabyl(diamonds$cut)
+```
+
+
+```{r, echo=TRUE}
+library(janitor)
+tabyl(diamonds, cut, color)
+```
+
+
+---
+# Bar plot
+
+.left-code[
+```{r plot-geom1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  aes(x = cut) +
+  geom_bar()
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom1", "png")`)
+]
+
+
+---
+# Pie charts vs Bar plots
+
+.left-code[
+```{r plot-pie, echo=T, collapse=T, comment = "  #>", out.width="80%"}
+pie(table(diamonds$cut))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom1", "png")`)
+]
+
+---
+# Avoid pie charts, if possible
+
+```{r plot-funny, echo=F, collapse=T, comment = "  #>", out.width="50%"}
+knitr::include_graphics("img/funny-pie-charts.png")
+```
+
+---
+# Going back to bar charts
+
+.left-code[
+```{r plot-geom2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom2", "png")`)
+]
+
+
+---
+# Going back to bar charts
+
+.left-code[
+```{r plot-geom3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  aes(x = cut) +
+  geom_bar(color = "royalblue")
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom3", "png")`)
+]
+
+---
+# Considering contingency tables
+
+
+.left-code[
+```{r plot-geom4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+cont_table <- tabyl(diamonds, cut)
+cont_table
+
+ggplot(cont_table) +  
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom4", "png")`)
+]
+
+---
+# Adding text to bars
+
+.left-code[
+```{r plot-geom5, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+  geom_text(aes(label = n), #<<
+            color = "royalblue") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom5", "png")`)
+]
+
+---
+# Adding text to bars
+
+.left-code[
+```{r plot-geom6, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+  geom_text(aes(label = n), 
+            color = "royalblue", 
+            nudge_y = 1000) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom6", "png")`)
+]
+
+
+---
+# Adding more text to bars
+
+.left-code[
+```{r plot-geom7, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+  geom_text(aes(label = n), 
+            color = "royalblue", 
+            nudge_y = 1000) + 
+  geom_text(aes(label = round(percent, 2)), 
+            color = "grey25", 
+            nudge_y = 2000)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom7", "png")`)
+]
+
+---
+# Considering a different direction
+
+.left-code[
+```{r plot-geom7_1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+  geom_text(aes(label = n), 
+            color = "royalblue", 
+            nudge_y = 1000) + 
+  geom_text(aes(label = round(percent, 2)), 
+            color = "grey25", 
+            nudge_y = 2000) + 
+  coord_flip() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom7_1", "png")`)
+]
+
+---
+# Considering different facets
+
+.left-code[
+```{r plot-geom8, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")  + 
+  facet_wrap(~ color)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom8", "png")`)
+]
+
+---
+# Considering different facets
+
+.left-code[
+```{r plot-geom9, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")  + 
+  facet_wrap(~ color, scales = "free_y", 
+             ncol = 4) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom9", "png")`)
+]
+
+---
+# Using fill as one of aesthetics variables
+
+.left-code[
+```{r plot-geom10, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + #<<
+  geom_bar()  
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom10", "png")`)
+]
+
+---
+# Considering different positions
+
+.left-code[
+```{r plot-geom11, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill")  #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom11", "png")`)
+]
+
+---
+# Changing labels
+
+.left-code[
+```{r plot-geom12, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill")  + 
+  labs(y = "Percentage of clarity", #<<
+       title = "Distribution of clarity", #<<
+       subtitle = "by different cuts") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom12", "png")`)
+]
+
+
+---
+# Different positions
+
+.left-code[
+```{r plot-geom13, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "dodge")  #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom13", "png")`)
+]
+
+---
+# Breaking the plot with facets
+
+.left-code[
+```{r plot-geom14, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "dodge") +  
+  facet_wrap( ~ cut, scales = "free") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom14", "png")`)
+]
+
+---
+# Fixing the x-axis
+
+.left-code[
+```{r plot-geom15, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = color, fill = color) + #<<
+  geom_bar(position = "dodge") +  
+  facet_wrap( ~ cut, scales = "free") 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom15", "png")`)
+]
+
+
+---
+# Removing the legend
+
+.left-code[
+```{r plot-geom16, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = color, fill = color) + 
+  geom_bar(position = "dodge") +  
+  facet_wrap( ~ cut, scales = "free") + 
+  theme(legend.position = "none") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom16", "png")`)
+]
+
+---
+
+# Your turn 
+
+- Try to create a different bar plot, considering other variables or other data sets.
+
+- Use the fill argument to change colors based on some variables.
+
+- Try the argument position using the options "fill" or "dodge".
+
+- Use the argument width to change the width of the bars.
+
+
+---
+class: inverse, middle, center
+
+# Examples with numerical variables
+
+---
+# Options for numerical variables
+
+- There are many geometrical objects to deal with numerical variables:
+
+  - `geom_point`;
+  - `geom_line`;
+  - `geom_histogram`;
+  - `geom_density`;
+  - `geom_boxplot`;
+  
+- One can also think statistical models to use together with your data.
+
+  - `geom_smooth`;
+  - `geom_quantile`;
+  - `geom_qq_line`.
+  
+  
+---
+# Scatter plot
+
+.left-code[
+```{r plot-num1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+  geom_point() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num1", "png")`)
+]
+
+---
+# Adding transparency
+
+.left-code[
+```{r plot-num2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+  geom_point(alpha = 0.1) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num2", "png")`)
+]
+
+
+---
+# Changing the color by another variable
+
+.left-code[
+```{r plot-num3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price, 
+      colour = cut) + #<<
+  geom_point(alpha = 0.1) 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num3", "png")`)
+]
+
+
+---
+# Considering facets to add more information
+
+.left-code[
+```{r plot-num4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price, 
+      colour = cut) + 
+  geom_point() + 
+  facet_wrap(~ clarity) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num4", "png")`)
+]
+
+
+---
+# Creating a grid of facets with two variables
+
+.left-code[
+```{r plot-num5, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price, 
+      color = color) + 
+  geom_point() + 
+  facet_grid(cut ~ clarity) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num5", "png")`)
+]
+
+---
+# Evaluating one variable at a time
+
+.left-code[
+```{r plot-num6, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price) + 
+  geom_histogram() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num6", "png")`)
+]
+
+
+---
+# Evaluating one variable at a time
+
+.left-code[
+```{r plot-num7, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price) + 
+  geom_histogram(fill = "darkviolet", #<<
+                 color = "grey75") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num7", "png")`)
+]
+
+---
+# Smoothing the histogram
+
+.left-code[
+```{r plot-num8, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + #<<
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+  geom_density() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num8", "png")`)
+]
+
+
+---
+# Color information for the density
+
+.left-code[
+```{r plot-num9, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+  geom_density(color = "royalblue") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num9", "png")`)
+]
+
+---
+# Using color with aesthetics variable
+
+.left-code[
+```{r plot-num10, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_density(aes(color = clarity)) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num10", "png")`)
+]
+
+
+
+---
+# Using color with aesthetics variable
+
+.left-code[
+```{r plot-num11, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_density(aes(fill = clarity)) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num11", "png")`)
+]
+
+---
+# Adding transparency
+
+.left-code[
+```{r plot-num12, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_density(aes(fill = clarity), 
+               alpha = 0.5) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num12", "png")`)
+]
+
+---
+# Considering facets
+
+.left-code[
+```{r plot-num13, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+  facet_wrap(~ clarity) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num13", "png")`)
+]
+
+---
+# Allowing y-axis to vary freely
+
+.left-code[
+```{r plot-num14, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+  facet_wrap(~ clarity, 
+             scales = "free_y") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num14", "png")`)
+]
+
+
+---
+# Considering other plots - boxplots
+
+.left-code[
+```{r plot-num15, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price) + 
+  geom_boxplot(fill = "darkviolet", #<<
+                 color = "black") #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num15", "png")`)
+]
+
+---
+# Creating more groups of variables
+
+.left-code[
+```{r plot-num16, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price, x = cut) + 
+  geom_boxplot(fill = "darkviolet", 
+                 color = "black") 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num16", "png")`)
+]
+
+---
+# Using the fill aesthetic
+
+.left-code[
+```{r plot-num17, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price, x = cut) + 
+  geom_boxplot(aes(fill = clarity)) 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num17", "png")`)
+]
+
+
+---
+# Removing the outliers
+
+.left-code[
+```{r plot-num18, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+# Just for purposes of illustration
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price, x = cut) + 
+  geom_boxplot(aes(fill = clarity), 
+               outlier.alpha = 0) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-num18", "png")`)
+]
+
+---
+
+# Your turn
+
+- Try to build scatter plots with other variables.
+
+- Consider different variables to build the histograms.
+
+- Instead of using the color aesthestic with geom_density, try using linetype for obtaining different curves.

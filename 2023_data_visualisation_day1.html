@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data visualisation tools with R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Bruno Santos" />
+    <script src="2023_data_visualisation_day1_files/header-attrs-2.20/header-attrs.js"></script>
+    <script src="2023_data_visualisation_day1_files/fabric-4.3.1/fabric.min.js"></script>
+    <link href="2023_data_visualisation_day1_files/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="2023_data_visualisation_day1_files/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <script src="2023_data_visualisation_day1_files/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="2023_data_visualisation_day1_files/shareon-1.4.1/shareon.min.css" rel="stylesheet" />
+    <script src="2023_data_visualisation_day1_files/shareon-1.4.1/shareon.min.js"></script>
+    <link href="2023_data_visualisation_day1_files/xaringanExtra-shareagain-0.2.6/shareagain.css" rel="stylesheet" />
+    <script src="2023_data_visualisation_day1_files/xaringanExtra-shareagain-0.2.6/shareagain.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Data visualisation tools with R
+]
+.author[
+### Bruno Santos
+]
+.date[
+### feb/2023
+]
+
+---
+
+
+
+
+
+
+
+
+
+class: center, bottom
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="img/ggplot2_masterpiece.png" alt="&amp;lt;center&amp;gt;&amp;lt;b&amp;gt; &amp;lt;/center&amp;gt;&amp;lt;/b&amp;gt;" width="70%" /&gt;
+&lt;p class="caption"&gt;&lt;center&gt;&lt;b&gt; &lt;/center&gt;&lt;/b&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+## Artwork by @allison_horst
+
+---
+# Quick reminder:
+
+### Stats-Desk
+
+- Service maintained by members of the Statistics group:
+
+- More information at:
+
+https://research.kent.ac.uk/statistics/statistics-consultancy/
+
+- Provides help with statistical analysis for the University of Kent community.
+
+- Examples:
+
+  - Support you with designing an investigation, including help with the preparation of questionnaires,
+  - Help you to select the right techniques, tools, and software for analysing data,
+  - Advise on statistical analyses and presentation of conclusions
+
+
+---
+
+# ggplot2
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="img/hex-ggplot2.png" alt="&amp;lt;center&amp;gt;&amp;lt;b&amp;gt; &amp;lt;/center&amp;gt;&amp;lt;/b&amp;gt;" width="20%" /&gt;
+&lt;p class="caption"&gt;&lt;center&gt;&lt;b&gt; &lt;/center&gt;&lt;/b&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+- Builds plots with a layer logic.
+
+  - Similar to pipe operator (`%&gt;%`).
+  
+  - But with operator `+`.
+
+- Developed by [Hadley Wickham](https://hadley.nz).
+
+  - Now part of the tidyverse: [https://ggplot2.tidyverse.org](https://ggplot2.tidyverse.org)
+
+- Inspired by "The Grammar of Graphics" by Leland Wilkinson (1999) (`gg` of `ggplot2`].
+
+---
+
+# Topics
+
+- Introduction to plots
+
+  - Base R: `graphics` package.
+  
+- Introduction to `ggplot2`.
+
+  - Illustration with different geometrical objects
+
+  - More options for your plot
+
+- Combining different plots with `patchwork`
+
+- Making maps with `ggplot2`
+
+- Animations using `gganimate`
+
+- Examples with web interfaces:
+
+  - maps with `leaflet`
+
+  - Interactive plots with `highcharter`
+
+
+---
+class: center, middle, inverse
+
+# Examples
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-extra7-1.png)
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-geom14-1.png)
+
+&lt;!-- --- --&gt;
+&lt;!-- class: center, middle --&gt;
+
+&lt;!-- ![](2022_data_visualisation_files/figure-html/plot-map2-1.png) --&gt;
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-patch3-1.png)
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-patch4-1.png)
+
+---
+class: center, middle
+
+![](2022_data_visualisation_files/figure-html/plot-anim1-1.gif)
+
+---
+class: center, middle, inverse
+
+# Introduction to plots
+
+## Base R: graphics package
+
+---
+
+# `plot` function
+
+- Always helpful to check:
+
+
+```r
+?plot
+```
+
+--
+
+- It does have a lot of arguments and possibilities.
+
+
+```r
+?par
+```
+
+--
+
+- For quick analysis of results and checks, it is definitely a good option.
+
+--
+
+- It allows the possibility of thinking about layers.
+
+  - But checks are not automatic.
+  
+---
+# Our first plot
+
+.left-code[
+
+```r
+x &lt;- 3:15
+plot(x)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot1-1.png)
+]
+
+
+---
+# Incrementing our first plot
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(x, y)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot2-1.png)
+]
+
+---
+# This is different
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(y, x)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot3-1.png)
+]
+
+---
+# Does the order of arguments matter?
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(y = y, x = x)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot4-1.png)
+]
+
+---
+# Different options for our plot
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(y = y, x = x, type = 'l')
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot5-1.png)
+]
+
+---
+# Different options for our plot
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(y = y, x = x, type = 'b')
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot6-1.png)
+]
+
+
+---
+# Different options for our plot
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(y = y, x = x, type = 'h')
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot7-1.png)
+]
+
+
+---
+# Different colors and linetypes 
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(y = y, x = x, type = 'h', 
+     col = 2, 
+     lty = 2)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot8-1.png)
+]
+
+---
+# Different types of points
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+plot(y = y, x = x, type = 'b', 
+     col = 4, 
+     lty = 4,
+     pch = 16)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot9-1.png)
+]
+
+
+---
+# One can visualise several plots
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+
+par(mfrow = c(1, 2))
+
+plot(y = y, x = x, type = 'b', 
+     col = 4, 
+     lty = 4,
+     pch = 16)
+
+plot(y = y, x = x, type = 'h', 
+     col = 4, 
+     lty = 4)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot10-1.png)
+]
+
+
+---
+# One can visualise several plots
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+
+par(mfrow = c(2, 2))
+
+plot(y = y, x = x, type = 'b', 
+     col = 4, lty = 4, pch = 16)
+
+plot(y = y, x = x, type = 'h', 
+     col = 4, lty = 4)
+
+plot(y = y, x = x, type = 'l', 
+     col = "darkviolet", lty = 5)
+
+plot(y = y, x = x, type = 'o', 
+     col = "royalblue", lty = 3)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot11-1.png)
+]
+
+---
+# One can add layers of information
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+z &lt;- y + 3
+w &lt;- z + 3
+
+plot(x, y, type = 'l')
+
+lines(x, z, col = 2)
+
+points(x, w, col = 4)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot12-1.png)
+]
+
+---
+# One can fix this issue
+
+.left-code[
+
+```r
+x &lt;- 3:15
+y &lt;- 6:18
+z &lt;- y + 3
+w &lt;- z + 3
+
+plot(x, y, type = 'l', 
+*    ylim = c(5, 24))
+
+lines(x, z, col = 2)
+
+points(x, w, col = 4)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot13-1.png)
+]
+
+---
+# Several additional functions to use
+
+- For numerical variables:
+
+  - `boxplot` - boxplots;
+  - `hist` - histograms;
+  - `plot.density` - density functions;
+  - ...
+  
+- For categorical variables:
+
+  - `barplot`;
+  - ...
+
+--
+
+- It's possible to use `formula` objects.
+
+  - `y ~ x`
+  
+---
+# Example - boxplot
+
+.left-code[
+
+```r
+boxplot(mtcars$mpg ~ mtcars$cyl, 
+        ylab = "Miles per gallon",
+        xlab = "Cylinders")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot14-1.png)
+]
+
+
+---
+class: center, middle, inverse
+
+# Introduction to ggplot2
+
+
+---
+# Basic sintax in ggplot2
+
+
+```r
+ggplot(data) +
+  aesthetics + 
+  geometries 
+```
+
+&lt;img src="img/ggplot_sintaxe.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# More complete sintax in ggplot2
+
+
+```r
+ggplot(data) +
+  aesthetics + 
+  geometries +
+  facets +
+  coordinates + 
+  theme
+```
+
+&lt;img src="img/grammar_ggplot.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+# First example
+
+
+```r
+d &lt;- tibble(var_x = 1:4,
+            var_y = seq(2, 8, 2),
+            var_group = c(rep("a", 3), "b"))
+d
+  #&gt; # A tibble: 4 × 3
+  #&gt;   var_x var_y var_group
+  #&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;    
+  #&gt; 1     1     2 a        
+  #&gt; 2     2     4 a        
+  #&gt; 3     3     6 a        
+  #&gt; 4     4     8 b
+```
+
+---
+# First example
+
+.left-code[
+
+
+```r
+ggplot(d)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg1-1.png)
+]
+
+
+---
+# First example
+
+.left-code[
+
+
+```r
+ggplot(d, aes(x = var_x, y = var_y))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg2-1.png)
+]
+
+---
+# First example
+
+.left-code[
+
+
+```r
+ggplot(d) + 
+  aes(x = var_x, y = var_y)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg3-1.png)
+]
+
+
+---
+# First example
+
+.left-code[
+
+
+```r
+ggplot(d) + 
+  aes(x = var_group, y = var_y)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg4-1.png)
+]
+
+---
+# Adding geometries
+
+.left-code[
+
+
+```r
+ggplot(d) + 
+  aes(x = var_x, y = var_y) + 
+  geom_point()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg5-1.png)
+]
+
+
+
+---
+# Adding other geometries
+
+.left-code[
+
+
+```r
+ggplot(d) + 
+  aes(x = var_x, y = var_y) + 
+  geom_line()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg6-1.png)
+]
+
+---
+# Changing color
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_point(color = "darkviolet")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg7-1.png)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  geom_point(aes(x = var_x, y = var_y, 
+                 color = var_group))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg8-1.png)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 color = var_group))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg9-1.png)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+
+```r
+d &lt;- tibble(var_x = 1:5,
+            var_y = seq(2, 10, 2),
+            var_group = c("a", "a", "a",
+                          "b", "b"))
+
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 color = var_group))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg10-1.png)
+]
+
+
+---
+# Considering other aesthestics
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 linetype = var_group))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg11-1.png)
+]
+
+
+---
+# Adding more than one geometry
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  geom_line(aes(x = var_x, y = var_y, 
+                 color = var_group)) +
+  geom_point(aes(x = var_x, y = var_y))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg12-1.png)
+]
+
+---
+# Adding more than one geometry
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(aes(color = var_group)) +
+  geom_point()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg13-1.png)
+]
+
+---
+# Order makes a difference
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_point() + 
+  geom_line(aes(color = var_group))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg14-1.png)
+]
+
+---
+# Using same aesthestics for all geometries
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y, color = var_group) +
+  geom_point() + 
+  geom_line()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg15-1.png)
+]
+
+---
+# Changing color just for one
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line() + 
+  geom_point(aes(color = var_group)) 
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg16-1.png)
+]
+
+---
+# Changing color just for one
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(aes(color = var_group)) 
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg17-1.png)
+]
+
+
+
+---
+# Changing color for both geometries
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") 
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg18-1.png)
+]
+
+---
+# Adding facets
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+* facet_wrap(~ var_group)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg19-1.png)
+]
+
+
+---
+# Adding facets with different x-axis
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group, 
+*            scales = "free_x")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg20-1.png)
+]
+
+---
+# Adding facets with different y-axis
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group, 
+*            scales = "free_y")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg21-1.png)
+]
+
+---
+# Adding facets with different y-axis
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group, 
+*            scales = "free")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg22-1.png)
+]
+
+---
+# Adding coordinates
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+* coord_equal()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg23-1.png)
+]
+
+
+---
+# Changing the theme
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+  coord_equal() + 
+* theme_bw()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg24-1.png)
+]
+
+---
+# Changing the theme
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+  coord_equal() + 
+* theme_minimal()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg25-1.png)
+]
+
+---
+# Changing the theme
+
+.left-code[
+
+
+```r
+ggplot(d) +  
+  aes(x = var_x, y = var_y) +
+  geom_line(color = "yellow") + 
+  geom_point(color = "darkviolet") + 
+  facet_wrap(~ var_group) + 
+  coord_equal() + 
+* theme_classic()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-gg26-1.png)
+]
+
+---
+
+# Your turn
+
+- Check the documentation to see the possibilities of geometric objects:
+
+  - https://ggplot2.tidyverse.org/reference/index.html
+  
+- Did you notice any geometry not present there?
+
+- Check some of the examples.
+
+- See if you have any doubts about the examples presented so far.
+
+
+---
+class: inverse, middle, center
+
+# Illustration with different geometrical objects
+
+---
+class: inverse, middle, center
+
+# Examples with categorical variables
+
+---
+# Dataset to be used
+
+- Considering a dataset from `ggplot2`
+
+
+```r
+library(ggplot2)
+data(diamonds)
+?diamonds
+```
+
+- Checking some information about the dataset:
+
+
+```r
+library(skimr)
+skim(diamonds)
+```
+
+---
+# Contingency tables
+
+
+```r
+library(janitor)
+tabyl(diamonds$cut)
+  #&gt;  diamonds$cut     n    percent
+  #&gt;          Fair  1610 0.02984798
+  #&gt;          Good  4906 0.09095291
+  #&gt;     Very Good 12082 0.22398962
+  #&gt;       Premium 13791 0.25567297
+  #&gt;         Ideal 21551 0.39953652
+```
+
+
+
+```r
+library(janitor)
+tabyl(diamonds, cut, color)
+  #&gt;        cut    D    E    F    G    H    I   J
+  #&gt;       Fair  163  224  312  314  303  175 119
+  #&gt;       Good  662  933  909  871  702  522 307
+  #&gt;  Very Good 1513 2400 2164 2299 1824 1204 678
+  #&gt;    Premium 1603 2337 2331 2924 2360 1428 808
+  #&gt;      Ideal 2834 3903 3826 4884 3115 2093 896
+```
+
+
+---
+# Bar plot
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  aes(x = cut) +
+  geom_bar()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom1-1.png)
+]
+
+
+---
+# Pie charts vs Bar plots
+
+.left-code[
+
+```r
+pie(table(diamonds$cut))
+```
+
+&lt;img src="2023_data_visualisation_day1_files/figure-html/plot-pie-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom1-1.png)
+]
+
+---
+# Avoid pie charts, if possible
+
+&lt;img src="img/funny-pie-charts.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# Going back to bar charts
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom2-1.png)
+]
+
+
+---
+# Going back to bar charts
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  aes(x = cut) +
+  geom_bar(color = "royalblue")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom3-1.png)
+]
+
+---
+# Considering contingency tables
+
+
+.left-code[
+
+```r
+cont_table &lt;- tabyl(diamonds, cut)
+cont_table
+  #&gt;        cut     n    percent
+  #&gt;       Fair  1610 0.02984798
+  #&gt;       Good  4906 0.09095291
+  #&gt;  Very Good 12082 0.22398962
+  #&gt;    Premium 13791 0.25567297
+  #&gt;      Ideal 21551 0.39953652
+
+ggplot(cont_table) +  
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+*          stat = "identity")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom4-1.png)
+]
+
+---
+# Adding text to bars
+
+.left-code[
+
+```r
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+* geom_text(aes(label = n),
+*           color = "royalblue")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom5-1.png)
+]
+
+---
+# Adding text to bars
+
+.left-code[
+
+```r
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+  geom_text(aes(label = n), 
+            color = "royalblue", 
+*           nudge_y = 1000)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom6-1.png)
+]
+
+
+---
+# Adding more text to bars
+
+.left-code[
+
+```r
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+  geom_text(aes(label = n), 
+            color = "royalblue", 
+            nudge_y = 1000) + 
+  geom_text(aes(label = round(percent, 2)), 
+            color = "grey25", 
+            nudge_y = 2000)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom7-1.png)
+]
+
+---
+# Considering a different direction
+
+.left-code[
+
+```r
+ggplot(cont_table) +  
+  theme_bw() + 
+  aes(x = cut, y = n) +
+  geom_bar(fill = "royalblue", 
+           stat = "identity")  + 
+  geom_text(aes(label = n), 
+            color = "royalblue", 
+            nudge_y = 1000) + 
+  geom_text(aes(label = round(percent, 2)), 
+            color = "grey25", 
+            nudge_y = 2000) + 
+* coord_flip()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom7_1-1.png)
+]
+
+---
+# Considering different facets
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")  + 
+  facet_wrap(~ color)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom8-1.png)
+]
+
+---
+# Considering different facets
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")  + 
+  facet_wrap(~ color, scales = "free_y", 
+*            ncol = 4)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom9-1.png)
+]
+
+---
+# Using fill as one of aesthetics variables
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+* aes(x = cut, fill = color) +
+  geom_bar()  
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom10-1.png)
+]
+
+---
+# Considering different positions
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+* geom_bar(position = "fill")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom11-1.png)
+]
+
+---
+# Changing labels
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill")  + 
+* labs(y = "Percentage of clarity",
+*      title = "Distribution of clarity",
+*      subtitle = "by different cuts")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom12-1.png)
+]
+
+
+---
+# Different positions
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+* geom_bar(position = "dodge")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom13-1.png)
+]
+
+---
+# Breaking the plot with facets
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "dodge") +  
+* facet_wrap( ~ cut, scales = "free")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom14-1.png)
+]
+
+---
+# Fixing the x-axis
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+* aes(x = color, fill = color) +
+  geom_bar(position = "dodge") +  
+  facet_wrap( ~ cut, scales = "free") 
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom15-1.png)
+]
+
+
+---
+# Removing the legend
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = color, fill = color) + 
+  geom_bar(position = "dodge") +  
+  facet_wrap( ~ cut, scales = "free") + 
+* theme(legend.position = "none")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-geom16-1.png)
+]
+
+---
+
+# Your turn 
+
+- Try to create a different bar plot, considering other variables or other data sets.
+
+- Use the fill argument to change colors based on some variables.
+
+- Try the argument position using the options "fill" or "dodge".
+
+- Use the argument width to change the width of the bars.
+
+
+---
+class: inverse, middle, center
+
+# Examples with numerical variables
+
+---
+# Options for numerical variables
+
+- There are many geometrical objects to deal with numerical variables:
+
+  - `geom_point`;
+  - `geom_line`;
+  - `geom_histogram`;
+  - `geom_density`;
+  - `geom_boxplot`;
+  
+- One can also think statistical models to use together with your data.
+
+  - `geom_smooth`;
+  - `geom_quantile`;
+  - `geom_qq_line`.
+  
+  
+---
+# Scatter plot
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+* geom_point()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num1-1.png)
+]
+
+---
+# Adding transparency
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+* geom_point(alpha = 0.1)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num2-1.png)
+]
+
+
+---
+# Changing the color by another variable
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price, 
+*     colour = cut) +
+  geom_point(alpha = 0.1) 
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num3-1.png)
+]
+
+
+---
+# Considering facets to add more information
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price, 
+      colour = cut) + 
+  geom_point() + 
+* facet_wrap(~ clarity)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num4-1.png)
+]
+
+
+---
+# Creating a grid of facets with two variables
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price, 
+      color = color) + 
+  geom_point() + 
+* facet_grid(cut ~ clarity)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num5-1.png)
+]
+
+---
+# Evaluating one variable at a time
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price) + 
+* geom_histogram()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num6-1.png)
+]
+
+
+---
+# Evaluating one variable at a time
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price) + 
+* geom_histogram(fill = "darkviolet",
+*                color = "grey75")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num7-1.png)
+]
+
+---
+# Smoothing the histogram
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+* aes(x = price, y = ..density..) +
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+* geom_density()
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num8-1.png)
+]
+
+
+---
+# Color information for the density
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+* geom_density(color = "royalblue")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num9-1.png)
+]
+
+---
+# Using color with aesthetics variable
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+* geom_density(aes(color = clarity))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num10-1.png)
+]
+
+
+
+---
+# Using color with aesthetics variable
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+* geom_density(aes(fill = clarity))
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num11-1.png)
+]
+
+---
+# Adding transparency
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_density(aes(fill = clarity), 
+*              alpha = 0.5)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num12-1.png)
+]
+
+---
+# Considering facets
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+* facet_wrap(~ clarity)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num13-1.png)
+]
+
+---
+# Allowing y-axis to vary freely
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = price, y = ..density..) + 
+  geom_histogram(fill = "darkviolet", 
+                 color = "grey75") + 
+  facet_wrap(~ clarity, 
+*            scales = "free_y")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num14-1.png)
+]
+
+
+---
+# Considering other plots - boxplots
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price) + 
+* geom_boxplot(fill = "darkviolet",
+*                color = "black")
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num15-1.png)
+]
+
+---
+# Creating more groups of variables
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price, x = cut) + 
+  geom_boxplot(fill = "darkviolet", 
+                 color = "black") 
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num16-1.png)
+]
+
+---
+# Using the fill aesthetic
+
+.left-code[
+
+```r
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price, x = cut) + 
+  geom_boxplot(aes(fill = clarity)) 
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num17-1.png)
+]
+
+
+---
+# Removing the outliers
+
+.left-code[
+
+```r
+# Just for purposes of illustration
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(y = price, x = cut) + 
+  geom_boxplot(aes(fill = clarity), 
+*              outlier.alpha = 0)
+```
+]
+
+.right-plot[
+![](2023_data_visualisation_day1_files/figure-html/plot-num18-1.png)
+]
+
+---
+
+# Your turn
+
+- Try to build scatter plots with other variables.
+
+- Consider different variables to build the histograms.
+
+- Instead of using the color aesthestic with geom_density, try using linetype for obtaining different curves.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,1189 @@
+---
+# Para transformar em PDF, usar: 
+# pagedown::chrome_print("docs/index.html")
+title: "Data visualisation tools with R"
+author: "Bruno Santos"
+date: "feb/2023"
+output:
+  xaringan::moon_reader:
+    seal: true
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+```{r xaringan-scribble, echo=FALSE}
+xaringanExtra::use_scribble()
+xaringanExtra::use_share_again()
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      fig.align = "center", 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      comment = "  #>", 
+                      collapse = T)
+```
+
+```{r libs}
+library(tidyverse)
+library(MASS) 
+library(skimr)
+library(viridis)
+library(gganimate)
+library(highcharter)
+```
+
+class: center, bottom
+
+```{r, out.width="70%", fig.cap="<center><b> </center></b>"}
+knitr::include_graphics("img/ggplot2_masterpiece.png")
+```
+
+## Artwork by @allison_horst
+
+---
+# Quick reminder:
+
+### Stats-Desk
+
+- Service maintained by members of the Statistics group:
+
+- More information at:
+
+https://research.kent.ac.uk/statistics/statistics-consultancy/
+
+- Provides help with statistical analysis for the University of Kent community.
+
+- Examples:
+
+  - Support you with designing an investigation, including help with the preparation of questionnaires,
+  - Help you to select the right techniques, tools, and software for analysing data,
+  - Advise on statistical analyses and presentation of conclusions
+
+
+---
+
+# ggplot2
+
+```{r, out.width="20%", fig.cap="<center><b> </center></b>"}
+knitr::include_graphics("img/hex-ggplot2.png")
+```
+
+- Builds plots with a layer logic.
+
+  - Similar to pipe operator (`%>%`).
+  
+  - But with operator `+`.
+
+- Developed by [Hadley Wickham](https://hadley.nz).
+
+  - Now part of the tidyverse: [https://ggplot2.tidyverse.org](https://ggplot2.tidyverse.org)
+
+- Inspired by "The Grammar of Graphics" by Leland Wilkinson (1999) (`gg` of `ggplot2`].
+
+---
+# Topics
+
+- Introduction to plots
+
+  - Base R: `graphics` package.
+  
+- Introduction to `ggplot2`.
+
+  - Illustration with different geometrical objects
+
+  - More options for your plot
+
+- Combining different plots with `patchwork`
+
+- Making maps with `ggplot2`
+
+- Animations using `gganimate`
+
+- Examples with web interfaces:
+
+  - maps with `leaflet`
+
+  - Interactive plots with `highcharter`
+
+
+---
+class: inverse, middle, center
+
+# More options for your plot
+
+---
+# Regarding scales
+
+- Changes regarding values for aesthetics variables, must be done through `scale_*` functions.
+
+--
+
+- For instance, if we want to change the values we observe for `x`, we should consider function like
+
+  - `scale_x_discrete`;
+  - `scale_x_continuous`;
+  - `scale_x_date`;
+  
+--
+
+- If we want to change the values we observe for `fill`, we should consider function like
+
+  - `scale_fill_discrete`;
+  - `scale_fill_continuous`;
+  - `scale_fill_date`;
+  
+--
+
+- The same is valid for `color` and other aesthetics variables.
+
+---
+# Examples
+
+.left-code[
+```{r plot-extra1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+  geom_point() + 
+  scale_x_continuous(breaks = c(0, 1.2, 1.4, 2, 3, 4.5, 5)) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra1", "png")`)
+]
+
+---
+# More examples
+ 
+.left-code[
+```{r plot-extra2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+  geom_point() + 
+  scale_x_continuous(breaks = c(0, 1.2, 1.4, 2, 3, 4.5, 5)) + 
+  scale_y_continuous(breaks = seq(0, 2000, by = 250)) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra2", "png")`)
+]
+
+
+---
+# Using vertical lines
+ 
+.left-code[
+```{r plot-extra3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+  geom_point() + 
+  geom_vline(xintercept = c(1.2, 1.4, 2, 3, 4.5, 5), #<<
+              color = "red", linetype = 2) + #<<
+  scale_y_continuous(breaks = seq(0, 20000, by = 2500)) 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra3", "png")`)
+]
+  
+
+---
+# Using horizontal lines
+ 
+.left-code[
+```{r plot-extra4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() +
+  aes(x = carat, y = price) + 
+  geom_point() + 
+  geom_vline(xintercept = c(0, 1.2, 1.4, 2, 3, 4.5, 5), 
+                 color = "red", linetype = 2) + 
+  geom_hline(yintercept = c(7500, 12600), #<<
+             color = "blue", #<<
+             linetype = "dotted") + #<<
+  scale_y_continuous(breaks = seq(0, 20000, by = 2500)) 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra4", "png")`)
+]
+
+
+---
+# Other options for scatter plots
+ 
+.left-code[
+```{r plot-extra5, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+# Using a different data set
+library(gapminder)
+data(gapminder)
+
+gapminder_2007 <- subset(gapminder, 
+                         year == 2007)
+
+ggplot(gapminder_2007) +  
+  theme_bw() +
+  aes(x = gdpPercap, y = lifeExp) + 
+  geom_point(aes(size = pop, color = continent))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra5", "png")`)
+]
+
+
+---
+# Other options for scatter plots
+ 
+.left-code[
+```{r plot-extra6, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+# Using a different data set
+library(gapminder)
+data(gapminder)
+
+gapminder_2007 <- subset(gapminder, 
+                         year == 2007)
+
+ggplot(gapminder_2007) +  
+  theme_bw() +
+  aes(x = gdpPercap, y = lifeExp) + 
+  geom_point(aes(size = pop, color = continent)) +
+  scale_size(name = "Population") + 
+  scale_color_viridis_d(name = "Continent")
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra6", "png")`)
+]
+
+---
+# Different scales of colors
+
+- A good choice for color is the `viridis` pallete.
+
+  - [https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)
+  
+--
+
+- But you can try other palletes as well, readily available within ggplot2.
+
+  - `scale_fill_brewer()`;
+  - `scale_fill_hue()`;
+  - `scale_fill_gradient()`;
+  - ...
+  
+
+  
+---
+# Examples
+
+.left-code[
+```{r plot-extra7, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_brewer(palette = "Purples", #<<
+                    direction = 1) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra7", "png")`)
+]
+
+---
+# Examples
+
+.left-code[
+```{r plot-extra8, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_brewer(palette = "Purples", #<<
+                    direction = -1) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra8", "png")`)
+]
+
+---
+# Examples
+
+.left-code[
+```{r plot-extra9, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_brewer(palette = "Reds", #<<
+                    direction = -1) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra9", "png")`)
+]
+
+---
+# Examples
+
+.left-code[
+```{r plot-extra10, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_grey() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra10", "png")`)
+]
+
+---
+# Example - viridis
+
+.left-code[
+```{r plot-extra11, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_viridis_d(option = "B", #<<
+                       direction = -1) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra11", "png")`)
+]
+
+---
+# Remember this plot?
+
+.left-code[
+```{r plot-geom8_8, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")  + 
+  facet_wrap(~ color)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-geom8_8", "png")`)
+]
+
+---
+
+# Changing direction of axis text
+
+.left-code[
+```{r plot-extra12, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")  + 
+  facet_wrap(~ color) + 
+  theme(axis.text.x = element_text(angle = 45)) #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra12", "png")`)
+]
+
+
+---
+
+# One can also change the size/color of font
+
+.left-code[
+```{r plot-extra13, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut) +
+  geom_bar(fill = "royalblue")  + 
+  facet_wrap(~ color) + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   vjust = 0.5), #<<
+        axis.title.y = element_text(size = 15, #<<
+                                    color = "red"))   #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra13", "png")`)
+]
+
+---
+# Saving your plot
+
+- Once you have the final version of your plot, use 
+
+```{r, echo=TRUE, eval=FALSE}
+?ggsave
+```
+
+--
+
+- For example,
+
+```{r, echo=TRUE, eval=FALSE}
+g <- ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_viridis_d(option = "B", direction = -1)
+
+ggsave("my_plot.png", plot = g)
+```
+
+- You can control width, height, scale, ...
+
+---
+# Your turn
+
+- Try to change the values of breaks in the x and y axis.
+
+- Use a different fill or color palette in one of the previous plots.
+
+- Change the direction of the text in the x or y axis.
+
+- Change the font size or the font color of a different axis.
+
+
+
+---
+class: inverse, middle, center
+
+# Combining different plots with patchwork
+
+
+---
+# Remember this plot?
+
+.left-code[
+```{r plot11_1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+x <- 3:15
+y <- 6:18
+
+par(mfrow = c(2, 2))
+
+plot(y = y, x = x, type = 'b', 
+     col = 4, lty = 4, pch = 16)
+
+plot(y = y, x = x, type = 'h', 
+     col = 4, lty = 4)
+
+plot(y = y, x = x, type = 'l', 
+     col = "darkviolet", lty = 5)
+
+plot(y = y, x = x, type = 'o', 
+     col = "royalblue", lty = 3)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot11_1", "png")`)
+]
+
+---
+# Package `patchwork`
+
+- Developed by Thomas Lin Pedersen (@thomasp85).
+
+  - Also developer of `gganimate` and other R packages.
+  
+--
+
+- More information at: [https://patchwork.data-imaginist.com/](https://patchwork.data-imaginist.com/)
+
+--
+
+- The idea is "to make it ridiculously simple to combine separate ggplots into the same graphic".
+
+---
+# One more illustration of a geom
+
+- `geom_line`
+
+--
+
+- Let's consider data about covid from different countries.
+
+```{r, echo=TRUE, verbose=FALSE}
+library(COVID19)
+italy <- covid19(country = "Italy", verbose = FALSE)
+us <- covid19(country = "US", verbose = FALSE)
+uk <- covid19(country = "United Kingdom", verbose = FALSE)
+```
+
+-- 
+
+- Each data set has the information about cases and deaths by date.
+
+---
+
+# Example of geom_line
+
+.left-code[
+```{r plot-patch1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot() +  
+  theme_bw() + 
+  geom_line(data = italy, color = "blue") + 
+  geom_line(data = us, color = "orange") + 
+  geom_line(data = uk, color = "red") + 
+  aes(x = date, y = deaths)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch1", "png")`)
+]
+
+---
+
+# Example of geom_line
+
+.left-code[
+```{r plot-patch2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+g1 <- ggplot() +  
+  theme_bw() + 
+  geom_line(data = italy, color = "blue") + 
+  geom_line(data = us, color = "orange") + 
+  geom_line(data = uk, color = "red") + 
+  aes(x = date, y = deaths) + 
+  scale_x_date(date_breaks = "3 months") + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   vjust = 0.5))
+g1
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch2", "png")`)
+]
+
+---
+# Heatmaps
+
+- We need to consider the geom
+
+  - `geom_tile`.
+  
+--
+
+- Then one only needs to give
+
+  - x coordinate
+  - y coordinate
+  - variable to fill the tile
+  
+--
+
+- Let's consider the following data set
+
+```{r, echo=TRUE}
+library(season)
+```
+
+```{r, echo=TRUE, eval=FALSE}
+?schz
+```
+
+---
+# Example of heatmap
+
+.left-code[
+```{r plot-patch3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+g2 <- ggplot(schz, aes(year, month, 
+                       fill = SczBroad)) + 
+  geom_tile(colour = "gray20", 
+            size = 1.5, 
+            stat = "identity") + 
+  scale_fill_viridis(option = "A") +
+  scale_y_continuous(breaks = 1:12, 
+                     labels = month.abb[1:12]) + 
+  xlab("") + 
+  ylab("") +
+  ggtitle("Total Australian Schizophrenics Born By Month and Year") + 
+  theme(
+    legend.position = "bottom", 
+    legend.title = element_blank(), 
+    panel.background = element_blank()
+  )
+g2
+```
+- Adapted from [https://gist.github.com/jalapic/9a1c069aa8cee4089c1e](https://gist.github.com/jalapic/9a1c069aa8cee4089c1e)
+
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch3", "png")`)
+]
+
+---
+# Using patchwork
+
+.left-code[
+```{r plot-patch4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+library(patchwork)
+g <- ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = color) + 
+  geom_bar(position = "fill") + 
+  coord_flip() + 
+  scale_fill_viridis_d(option = "B", direction = -1)
+ 
+(g + g1) / g2
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch4", "png")`)
+]
+
+
+---
+# Another options
+
+.left-code[
+```{r plot-patch5, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+library(patchwork)
+g4 <- ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = clarity) + 
+  geom_bar(position = "dodge") + 
+  coord_flip() + 
+  scale_fill_brewer(palette = "Reds", 
+                    direction = -1)
+ 
+g + g1 + g4 + g2 + 
+  plot_layout(nrow = 4)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch5", "png")`)
+]
+
+
+---
+# Different widths
+
+.left-code[
+```{r plot-patch6, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+library(patchwork)
+g4 <- ggplot(diamonds) +  
+  theme_bw() + 
+  aes(x = cut, fill = clarity) + 
+  geom_bar(position = "dodge") + 
+  coord_flip() + 
+  scale_fill_brewer(palette = "Reds", 
+                    direction = -1)
+ 
+g + g1 + g4 + g2 + 
+  plot_layout(widths = c(1, 2))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch6", "png")`)
+]
+
+---
+# You can even put plots inside other plots
+
+.left-code[
+```{r plot-patch7, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+p1 <- ggplot(mtcars) + 
+  geom_point(aes(mpg, disp)) + 
+  ggtitle('Plot 1')
+
+p2 <- ggplot(mtcars) + 
+  geom_boxplot(aes(gear, disp, group = gear)) + 
+  ggtitle('Plot 2')
+
+p1 + inset_element(p2, 
+                   left = 0.6, 
+                   bottom = 0.6, 
+                   right = 1, 
+                   top = 1)
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch7", "png")`)
+]
+
+
+---
+# Reusing the same legend
+
+.left-code[
+```{r plot-patch8, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+g5 <- ggplot(diamonds) + 
+  geom_bar(aes(x = clarity, fill = cut))
+
+g6 <- ggplot(diamonds) + 
+  geom_bar(aes(x = color, fill = cut))
+
+g5 / g6 + plot_layout(guides = 'collect')
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-patch8", "png")`)
+]
+
+---
+class: inverse, middle, center
+
+# Making maps with ggplot2
+
+---
+# Shapefiles
+
+- In order to plot maps, we need to have shapefiles for the region.
+
+- Once we have this, we can combine this information with other data sets to make our plots.
+
+- Here we are going to use UK's shapefile.
+
+- But the principles are always the same.
+
+---
+### Reading the shapefiles
+
+.left-code[
+```{r plot-map-uk0, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+library(sf)
+uk <- read_sf('Counties_and_Unitary_Authorities_(December_2022)_UK_BFC/Counties_and_Unitary_Authorities_(December_2022)_UK_BFC.shp')
+ggplot(uk) + geom_sf() + theme_bw()
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-map-uk0", "png")`)
+]
+
+
+---
+# Simplifying the shapefile
+
+.left-code[
+```{r plot-map-uk00, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+uk_simpl <- uk %>% st_simplify(dTolerance = 1e-03)
+
+ggplot(uk_simpl) + geom_sf() + theme_bw()
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-map-uk00", "png")`)
+]
+
+
+---
+# Merging with another data set
+
+- If we take a quick look in our shapefile, we have
+
+```{r, echo=TRUE}
+head(uk_simpl)
+```
+
+---
+# Population profile
+
+- We can consider data about the population profile:
+
+  - population;
+  - age groups;
+  - employment;
+  - industry.
+  
+- Information available in the following link:
+
+  - [https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/articles/populationprofilesforlocalauthoritiesinengland/2020-12-14](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/articles/populationprofilesforlocalauthoritiesinengland/2020-12-14)
+
+
+- Excel file with a selection of few variables.
+
+  - `data_to_plot.xslx`
+
+```{r, echo = TRUE}
+library(readxl)
+data_pop <- readxl::read_xlsx('data_to_plot.xlsx')
+```
+
+
+---
+# Merging with shapefile
+
+```{r, echo = TRUE}
+head(data_pop)
+```
+
+- We need to match `CTYUA22CD` from the shapefile with `area_code` from the census data.
+
+- We can do that using the package `dplyr` and the function `left_join`.
+
+```{r, echo=TRUE}
+uk_simpl <- uk_simpl %>% 
+  left_join(data_pop, by = c("CTYUA22CD" = "area_code"))
+```
+
+---
+# Now we plot
+
+--
+
+.left-code[
+```{r plot-map-uk, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(uk_simpl) + 
+  geom_sf(aes(fill = median_age)) + 
+  theme_bw() 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-map-uk", "png")`)
+]
+
+
+---
+# Another example
+
+- Unemployment
+
+.left-code[
+```{r plot-map-uk2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(uk_simpl) + 
+  geom_sf(aes(fill = Unemployment)) + 
+  theme_bw() 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-map-uk2", "png")`)
+]
+
+---
+
+# Creating a random variable
+
+```{r, echo = FALSE}
+uk_simpl$random <- runif(length(uk_simpl$Unemployment))
+```
+
+.left-code[
+```{r plot-map-uk3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(uk_simpl) + 
+  geom_sf(aes(fill = random)) + 
+  theme_bw() 
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-map-uk3", "png")`)
+]
+
+---
+
+# Changing some details
+
+.left-code[
+```{r plot-map-uk4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+ggplot(uk_simpl) + 
+  aes(fill = random)
+  geom_sf(color = "black", size = 0.1) + #<<
+  theme_void() #<<
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-map-uk4", "png")`)
+]
+
+
+---
+class: inverse, middle, center
+
+# Animations using gganimate
+
+---
+# Remember this plot?
+
+.left-code[
+```{r plot-extra5_1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%"}
+gapminder_2007 <- subset(gapminder, 
+                         year == 2007)
+
+ggplot(gapminder_2007) +  
+  theme_bw() +
+  aes(x = gdpPercap, y = lifeExp) + 
+  geom_point(aes(size = pop, color = continent))
+```
+]
+
+.right-plot[
+![](`r knitr::fig_chunk("plot-extra5_1", "png")`)
+]
+
+---
+# An animation to show the different years
+
+.left-code[
+```{r plot-anim1, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+library(gganimate)
+p <- ggplot(gapminder, 
+            aes(gdpPercap, 
+                lifeExp, 
+                size = pop, 
+                colour = country)) +
+  geom_point(alpha = 0.7) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  facet_wrap(~ continent) +
+  theme(legend.position = 'none') +
+  labs(title = 'Year: {frame_time}', 
+       x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) + #<<
+  ease_aes('linear') #<<
+
+animate(p)
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-anim1', echo = FALSE}
+```
+]
+
+
+---
+# An animation to show the different years
+
+.left-code[
+```{r plot-anim2, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+p <- ggplot(gapminder, 
+            aes(gdpPercap, 
+                lifeExp, 
+                size = pop, 
+                colour = country)) +
+  geom_point(alpha = 0.7) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  theme(legend.position = 'none') +
+  labs(title = 'Year: {frame_time}', 
+       x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) + 
+  ease_aes('linear') 
+
+animate(p)
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-anim2', echo = FALSE}
+```
+]
+
+
+---
+# A variation
+
+.left-code[
+```{r plot-anim3, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+p <- ggplot(gapminder, 
+            aes(gdpPercap, 
+                lifeExp, 
+                size = pop, 
+                colour = continent)) +
+  geom_point(alpha = 0.7) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  theme(legend.position = 'bottom') + #<<
+  labs(title = 'Year: {frame_time}', 
+       x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) + 
+  ease_aes('linear') 
+
+animate(p)
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-anim3', echo = FALSE}
+```
+]
+
+---
+# More options
+
+.left-code[
+```{r plot-anim4, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+p <- ggplot(gapminder, 
+            aes(gdpPercap, 
+                lifeExp, 
+                size = pop, 
+                colour = continent)) +
+  geom_point(alpha = 0.7) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  theme(legend.position = 'none') +
+  labs(title = 'Year: {frame_time}', 
+       x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) + 
+  ease_aes('linear') + 
+  view_follow(fixed_y = TRUE) #<<
+
+animate(p)
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-anim4', echo = FALSE}
+```
+]
+
+---
+# More options - Light shadow
+
+.left-code[
+```{r plot-anim5, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+p <- ggplot(gapminder, 
+            aes(gdpPercap, 
+                lifeExp, 
+                size = pop, 
+                colour = country)) +
+  geom_point(alpha = 0.7) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  theme(legend.position = 'none') +
+  labs(title = 'Year: {frame_time}', 
+       x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) + 
+  ease_aes('linear') + 
+  shadow_wake(wake_length = 0.1, alpha = FALSE) #<<
+
+animate(p)
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-anim5', echo = FALSE}
+```
+]
+
+---
+# Static line plot
+
+.left-code[
+```{r plot-static, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+p <- ggplot(
+  airquality,
+  aes(Day, Temp, group = Month, color = factor(Month))
+  ) +
+  geom_line() +
+  scale_color_viridis_d() +
+  labs(x = "Day of Month", y = "Temperature") +
+  theme(legend.position = "top")
+p
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-static', echo = FALSE}
+```
+]
+
+---
+# Static line plot - animated
+
+.left-code[
+```{r plot-static-not, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+p + transition_reveal(Day)
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-static-not', echo = FALSE}
+```
+]
+
+
+---
+class: inverse, middle, center
+
+# A few more options
+
+---
+# Examples with web interfaces:
+
+- One can use the package `leaflet` to create maps with interactive information.
+
+  - More information at: [https://rstudio.github.io/leaflet/](https://rstudio.github.io/leaflet/).
+  
+- Another interesting option is the package `highcharter`.
+
+  - More information at: [https://jkunst.com/highcharter/](https://jkunst.com/highcharter/).
+  
+---
+# Example with highcharter
+
+.left-code[
+```{r plot-highchart, echo=T, fig.show="hide", collapse=T, comment = "  #>", out.width="90%", eval=FALSE}
+library(highcharter)
+mpgman2 <- count(mpg, manufacturer, year)
+
+hchart(
+  mpgman2, 
+  "bar",
+  hcaes(x = manufacturer, y = n, group = year),
+  color = c("#7CB5EC", "#F7A35C"),
+  name = c("Year 1999", "Year 2008")
+  )
+```
+]
+
+.right-plot[
+```{r ref.label = 'plot-highchart', echo = FALSE}
+```
+]
+
+
+
